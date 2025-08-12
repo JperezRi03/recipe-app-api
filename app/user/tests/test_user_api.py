@@ -1,3 +1,4 @@
+import email
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.urls import reverse
@@ -8,6 +9,7 @@ from rest_framework import status
 
 CREATE_USER_URL = reverse('user:create')
 TOKEN_URL = reverse('user:token')
+ME_URL = reverse('user:me')
 
 
 def create_user(**params):
@@ -58,3 +60,42 @@ class PublicUserApiTests(TestCase):
             email=payload['email']
         ).exists()
         self.assertFalse(user_exists)
+
+    def test_retrive_user_unauthorized(self):
+        "Test auth required."
+        res = self.client.get(ME_URL)
+
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED) # pyright: ignore[reportAttributeAccessIssue]
+
+class PrivateUserApiTest(TestCase):
+    def setUp(self):
+        self.user = create_user(
+            email='test@example.com',
+            password='testpass123',
+            name='test'
+        )
+        self.client=APIClient()
+        self.client.force_authenticate(user=self.user)
+
+    def test_retrive_profile_success(self):
+        res = self.client.get(ME_URL)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)# pyright: ignore[reportAttributeAccessIssue]
+        self.assertEqual(res.data, { # pyright: ignore[reportAttributeAccessIssue]
+            'name': self.user.name,
+            'email':self.user.email,
+        })
+
+    def test_post_me_not_allowed(self):
+        res = self.client.post(ME_URL, {})
+
+        self.assertEqual(res.status_code, status.HTTP_405_METHOD_NOT_ALLOWED) # pyright: ignore[reportAttributeAccessIssue]
+
+    def test_update_user_profile(self):
+        payload = {'name': 'Updated name', 'password':'newpassword123'}
+        res = self.client.patch(ME_URL, payload)
+
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.name, payload['name'])
+        self.assertTrue(self.user.check_password(payload['password']))
+        self.assertEqual(res.status_code, status.HTTP_200_OK)   #pyright: ignore[reportAttributeAccessIssue]
