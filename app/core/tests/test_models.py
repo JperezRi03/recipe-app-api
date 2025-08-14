@@ -1,8 +1,6 @@
 from decimal import Decimal
-from turtle import st
 from django.test import TestCase
 from django.contrib.auth import get_user, get_user_model
-from docutils.nodes import description
 from core import models
 
 
@@ -50,7 +48,7 @@ class ModelTests(TestCase):
             'test@example.com',
             'testpass123',
         )
-        recipe = models.Recipe.objects.create(  # pyright: ignore[reportAttributeAccessIssue]
+        recipe = models.recipe.objects.create(  # pyright: ignore[reportAttributeAccessIssue]
             user=user,
             title='Sample Recipe Name',
             time_minutes=5,

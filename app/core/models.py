@@ -33,7 +33,7 @@ class User(AbstractBaseUser, PermissionsMixin): # pyright: ignore[reportIncompat
 
     USERNAME_FIELD = 'email'
 
-class Recipe(models.Model):
+class recipe(models.Model):
     """Recipe object."""
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
