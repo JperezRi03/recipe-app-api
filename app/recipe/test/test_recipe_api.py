@@ -92,3 +92,17 @@ class PrivateRecipeApiTests(TestCase):
 
             serializer = RecipeDetailSerializer(recipe)
             self.assertEqual(res.data, serializer.data)# pyright: ignore[reportAttributeAccessIssue]
+
+    def test_create_recipe(self):
+        payload = {
+            'title': 'Sample recipe',
+            'time_minutes': 30,
+            'price': Decimal('5.99'),
+        }
+        res = self.client.post(RECIPES_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)# pyright: ignore[reportAttributeAccessIssue]
+        recipes = recipe.objects.get(id=res.data['id'])# pyright: ignore[reportAttributeAccessIssue]
+        for k, v in payload.items():
+            self.assertEqual(getattr(recipes, k), v)
+        self.assertEqual(recipes.user, self.user)

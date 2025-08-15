@@ -16,8 +16,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user).order_by('-id')
 
-    def get_serializer_class(self):
-        """Return the serializer class for request."""
+    def get_serializer_class(self): # pyright: ignore[reportIncompatibleMethodOverride]
         if self.action == 'list':
             return serializers.RecipeSerializer
 
