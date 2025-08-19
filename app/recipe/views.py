@@ -2,14 +2,14 @@ from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-from core.models import recipe
+from core.models import Recipe
 from recipe import serializers
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
     """View for manage recipe APIs."""
     serializer_class = serializers.RecipeDetailSerializer
-    queryset = recipe.objects.all() # pyright: ignore[reportAttributeAccessIssue]
+    queryset = Recipe.objects.all() # pyright: ignore[reportAttributeAccessIssue]
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 

@@ -7,7 +7,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from core.models import recipe
+from core.models import Recipe
 
 from recipe.serializers import RecipeSerializer, RecipeDetailSerializer
 
@@ -27,7 +27,7 @@ def create_recipe(user, **params):
     }
     defaults.update(params)
 
-    recipes = recipe.objects.create(user=user, **defaults)  # pyright: ignore[reportAttributeAccessIssue]
+    recipes = Recipe.objects.create(user=user, **defaults)  # pyright: ignore[reportAttributeAccessIssue]
     return recipes
 
 def create_user(**params):
@@ -57,7 +57,7 @@ class PrivateRecipeApiTests(TestCase):
 
         res = self.client.get(RECIPES_URL)
 
-        recipes = recipe.objects.all().order_by('-id')  # pyright: ignore[reportAttributeAccessIssue]
+        recipes = Recipe.objects.all().order_by('-id')  # pyright: ignore[reportAttributeAccessIssue]
         serializer = RecipeSerializer(recipes, many=True)
         self.assertEqual(res.status_code, status.HTTP_200_OK)   # pyright: ignore[reportAttributeAccessIssue]
         self.assertEqual(res.data, serializer.data) # pyright: ignore[reportAttributeAccessIssue]
@@ -69,7 +69,7 @@ class PrivateRecipeApiTests(TestCase):
 
         res = self.client.get(RECIPES_URL)
 
-        recipes = recipe.objects.filter(user=self.user) # pyright: ignore[reportAttributeAccessIssue]
+        recipes = Recipe.objects.filter(user=self.user) # pyright: ignore[reportAttributeAccessIssue]
         serializer = RecipeSerializer(recipes, many=True)
         self.assertEqual(res.status_code, status.HTTP_200_OK)   # pyright: ignore[reportAttributeAccessIssue]
         self.assertEqual(res.data, serializer.data) # pyright: ignore[reportAttributeAccessIssue]
@@ -93,7 +93,7 @@ class PrivateRecipeApiTests(TestCase):
         res = self.client.post(RECIPES_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)# pyright: ignore[reportAttributeAccessIssue]
-        recipes = recipe.objects.get(id=res.data['id'])# pyright: ignore[reportAttributeAccessIssue]
+        recipes = Recipe.objects.get(id=res.data['id'])# pyright: ignore[reportAttributeAccessIssue]
         for k, v in payload.items():
             self.assertEqual(getattr(recipes, k), v)
         self.assertEqual(recipes.user, self.user)
@@ -161,7 +161,8 @@ class PrivateRecipeApiTests(TestCase):
         res = self.client.delete(url)
 
         self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)# pyright: ignore[reportAttributeAccessIssue]
-        self.assertFalse(recipe.objects.filter(id=recipe.id).exists())
+        self.assertFalse(Recipe.objects.filter(id=recipe.id).exists())# pyright: ignore[reportAttributeAccessIssue]
+
 
     def test_recipe_other_users_recipe_error(self):
         new_user = create_user(email='user2@example.com', password='test123')
@@ -171,4 +172,4 @@ class PrivateRecipeApiTests(TestCase):
         res = self.client.delete(url)
 
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)# pyright: ignore[reportAttributeAccessIssue]
-        self.assertTrue(recipe.objects.filter(id=recipe.id).exists())
+        self.assertTrue(Recipe.objects.filter(id=recipe.id).exists())# pyright: ignore[reportAttributeAccessIssue]

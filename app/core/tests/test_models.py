@@ -48,7 +48,7 @@ class ModelTests(TestCase):
             'test@example.com',
             'testpass123',
         )
-        recipe = models.recipe.objects.create(  # pyright: ignore[reportAttributeAccessIssue]
+        recipe = models.Recipe.objects.create(  # pyright: ignore[reportAttributeAccessIssue]
             user=user,
             title='Sample Recipe Name',
             time_minutes=5,
