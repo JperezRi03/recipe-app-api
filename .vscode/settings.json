@@ -1,0 +1,21 @@
+{
+    // Usa Pyright/Basedpyright en modo básico (no estricto)
+    "python.analysis.typeCheckingMode": "basic",
+
+    // Ajusta severidad de reglas que molestan mucho en Django/DRF
+    "python.analysis.diagnosticSeverityOverrides": {
+      "reportAttributeAccessIssue": "none",
+      "reportIncompatibleVariableOverride": "none",
+      "reportArgumentType": "none",
+      "reportOptionalMemberAccess": "warning",
+      "reportOptionalSubscript": "warning"
+    },
+
+    // Opcional: Ignorar carpetas donde no quieres análisis (como migraciones o venv)
+    "python.analysis.exclude": [
+      "**/migrations/**",
+      "**/venv/**",
+      "**/.venv/**",
+      "**/env/**"
+    ]
+  }
